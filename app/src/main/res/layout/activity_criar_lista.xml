@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CriarListaActivity">
+
+    <TextView
+        android:id="@+id/textAdicionarLista"
+        style="@style/App.Titulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Adicionar lista"
+        app:layout_constraintStart_toStartOf="@+id/textNome"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/textNome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="nome"
+        app:layout_constraintStart_toStartOf="@+id/editTextNome"
+        app:layout_constraintTop_toBottomOf="@+id/textAdicionarLista"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/editTextNome"
+        style="@style/App.EditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autofillHints="emailAddress"
+        android:hint="Nome da sua lista"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textNome"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/imageLogoLista"
+        style="@style/App.ImageView"
+        android:layout_width="@+id/editTextNome"
+        android:layout_height="330dp"
+        android:layout_marginTop="12dp"
+        android:contentDescription="Logo da lista"
+        app:layout_constraintEnd_toEndOf="@+id/editTextNome"
+        app:layout_constraintStart_toStartOf="@+id/editTextNome"
+        app:layout_constraintTop_toBottomOf="@+id/editTextNome"
+        tools:ignore="HardcodedText" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabCam"
+        style="@style/App.FloatingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:contentDescription="Ícone adicionar lista"
+        android:src="@android:drawable/ic_menu_camera"
+        app:layout_constraintBottom_toBottomOf="@+id/imageLogoLista"
+        app:layout_constraintEnd_toEndOf="@+id/imageLogoLista"
+        app:layout_constraintTop_toBottomOf="@+id/imageLogoLista"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/buttonCriar"
+        style="@style/App.Button"
+        android:layout_width="@+id/editTextNome"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50sp"
+        android:text="Criar"
+        app:layout_constraintEnd_toEndOf="@+id/editTextNome"
+        app:layout_constraintStart_toStartOf="@+id/editTextNome"
+        app:layout_constraintTop_toBottomOf="@+id/imageLogoLista"
+        tools:ignore="HardcodedText" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

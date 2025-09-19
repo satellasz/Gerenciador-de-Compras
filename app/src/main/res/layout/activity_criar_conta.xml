@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/criarConta"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CriarContaAcitvity">
+
+    <TextView
+        android:id="@+id/textCriarConta"
+        style="@style/App.Titulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Crie sua conta"
+        app:layout_constraintStart_toStartOf="@+id/textNome"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/textNome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="nome"
+        app:layout_constraintStart_toStartOf="@+id/editTextNome"
+        app:layout_constraintTop_toBottomOf="@+id/textCriarConta"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/editTextNome"
+        style="@style/App.EditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autofillHints="emailAddress"
+        android:hint="Seu Nome Completo"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textNome"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/textEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="email"
+        app:layout_constraintStart_toStartOf="@+id/editTextNome"
+        app:layout_constraintTop_toBottomOf="@+id/editTextNome"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/editTextEmail"
+        style="@style/App.EditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autofillHints="emailAddress"
+        android:hint="seuemail@gmail.com"
+        android:inputType="textEmailAddress"
+        app:layout_constraintStart_toStartOf="@+id/textEmail"
+        app:layout_constraintTop_toBottomOf="@+id/textEmail"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/textSenha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="senha"
+        app:layout_constraintStart_toStartOf="@+id/editTextEmail"
+        app:layout_constraintTop_toBottomOf="@+id/editTextEmail"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/editTextSenha"
+        style="@style/App.EditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autofillHints="password"
+        android:hint="********"
+        android:inputType="textPassword"
+        app:layout_constraintStart_toStartOf="@+id/textSenha"
+        app:layout_constraintTop_toBottomOf="@+id/textSenha"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/textConfirmarSenha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="confirmar senha"
+        app:layout_constraintStart_toStartOf="@+id/editTextSenha"
+        app:layout_constraintTop_toBottomOf="@+id/editTextSenha"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/editTextConfirmarSenha"
+        style="@style/App.EditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autofillHints="password"
+        android:hint="********"
+        android:inputType="textPassword"
+        app:layout_constraintStart_toStartOf="@+id/textConfirmarSenha"
+        app:layout_constraintTop_toBottomOf="@+id/textConfirmarSenha"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/buttonCriar"
+        style="@style/App.Button"
+        android:layout_width="@+id/editTextEmail"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30sp"
+        android:text="Criar"
+        app:layout_constraintEnd_toEndOf="@+id/editTextConfirmarSenha"
+        app:layout_constraintStart_toStartOf="@+id/editTextConfirmarSenha"
+        app:layout_constraintTop_toBottomOf="@+id/editTextConfirmarSenha"
+        tools:ignore="HardcodedText" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="10dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginEnd="10dp"
+    android:background="@drawable/searchview_border"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imgItem"
+        style="@style/App.ImageView"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:contentDescription="Imagem lista"
+        android:padding="2dp"
+        android:scaleType="fitCenter"
+        tools:src="@drawable/carrinho"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/txtItem"
+        style="@style/App.TituloLista"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:text="Título"
+        tools:ignore="HardcodedText" />
+</LinearLayout>
