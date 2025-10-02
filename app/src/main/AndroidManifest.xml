@@ -7,11 +7,9 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
-
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
@@ -24,6 +22,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GerenciadorCompras"
         tools:targetApi="31">
+        <activity
+            android:name=".ListaItemActivity"
+            android:exported="false" />
         <activity
             android:name=".CriarListaActivity"
             android:exported="false" />

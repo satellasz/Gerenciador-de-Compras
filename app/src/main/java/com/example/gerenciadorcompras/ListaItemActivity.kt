@@ -1,39 +1,29 @@
 package com.example.gerenciadorcompras
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.SearchView
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gerenciadorcompras.adapters.ListaAdapter
-import com.example.gerenciadorcompras.databinding.ActivityListaBinding
-import com.example.gerenciadorcompras.singletons.AppContainer.listaService
+import com.example.gerenciadorcompras.adapters.ItemAdapter
+import com.example.gerenciadorcompras.databinding.ActivityListaItemBinding
+import com.example.gerenciadorcompras.singletons.AppContainer.itemService
 import com.example.gerenciadorcompras.singletons.AppContainer.loginService
 import com.example.gerenciadorcompras.singletons.AppContainer.userService
 
-class ListaActivity : AppCompatActivity() {
+class ListaItemActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var binding: ActivityListaBinding
-    private lateinit var adapter: ListaAdapter
+    private lateinit var binding: ActivityListaItemBinding
 
-    private val launcher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val novasListas = listaService.getListasPorUsuario(userService.getUserLogado()!!)
-            adapter.submitList(novasListas)
-        }
-    }
+    private lateinit var adapter: ItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityListaBinding.inflate(layoutInflater)
+        binding = ActivityListaItemBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
 
@@ -46,22 +36,19 @@ class ListaActivity : AppCompatActivity() {
         }
 
         recyclerView = binding.recyclerView
-        recyclerView.layoutManager = GridLayoutManager(this, 2)
+        recyclerView.layoutManager = GridLayoutManager(this, 1)
 
-        val listas = listaService.getListasPorUsuario(userService.getUserLogado()!!)
+        val idLista = intent.getIntExtra("idLista", 0)
 
-        adapter = ListaAdapter { lista ->
-            val intent = Intent(this@ListaActivity, ListaItemActivity::class.java)
-            intent.putExtra("idLista", lista.id)
-            launcher.launch(intent)
-        }
+        val itens = itemService.getItensListaPorUsuario(userService.getUserLogado()!!, idLista)
 
+        adapter = ItemAdapter()
         recyclerView.adapter = adapter
-        adapter.submitList(listas)
+        adapter.submitList(itens)
 
         binding.fabAdd.setOnClickListener {
-            val intent = Intent(this@ListaActivity, CriarListaActivity::class.java)
-            launcher.launch(intent)
+//            val intent = Intent(this@ListaActivity, CriarListaActivity::class.java)
+//            launcher.launch(intent)
         }
 
         binding.imageButton.setOnClickListener {
@@ -72,7 +59,11 @@ class ListaActivity : AppCompatActivity() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    val novasListas = listaService.getListasPorUsuario(userService.getUserLogado()!!, it)
+                    val novasListas = itemService.getItensListaPorUsuario(
+                        userService.getUserLogado()!!,
+                        idLista,
+                        it
+                    )
                     adapter.submitList(novasListas)
                 }
                 return true
@@ -80,7 +71,11 @@ class ListaActivity : AppCompatActivity() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let {
-                    val novasListas = listaService.getListasPorUsuario(userService.getUserLogado()!!, it)
+                    val novasListas = itemService.getItensListaPorUsuario(
+                        userService.getUserLogado()!!,
+                        idLista,
+                        it
+                    )
                     adapter.submitList(novasListas)
                 }
                 return true

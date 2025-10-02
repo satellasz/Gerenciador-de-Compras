@@ -22,10 +22,6 @@ class ListaService(private val listaRepository: ListaRepository) {
         else AppResult(false, "Erro ao criar a lista")
     }
 
-    fun getListas(): List<Lista> {
-        return listaRepository.getListas()
-    }
-
     fun getListasPorUsuario(user: User): List<Lista> {
         return listaRepository.getListas().filter { it.user.id == user.id }.sortedBy { it.titulo }
     }
