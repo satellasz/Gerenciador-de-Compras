@@ -23,11 +23,7 @@ class ListaActivity : AppCompatActivity() {
 
     private val launcher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val novasListas = listaService.getListasPorUsuario(userService.getUserLogado()!!)
-            adapter.submitList(novasListas)
-        }
+    ) {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +48,7 @@ class ListaActivity : AppCompatActivity() {
 
         adapter = ListaAdapter { lista ->
             val intent = Intent(this@ListaActivity, ListaItemActivity::class.java)
+            intent.putExtra("tituloLista", lista.titulo)
             intent.putExtra("idLista", lista.id)
             launcher.launch(intent)
         }
@@ -72,7 +69,8 @@ class ListaActivity : AppCompatActivity() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    val novasListas = listaService.getListasPorUsuario(userService.getUserLogado()!!, it)
+                    val novasListas =
+                        listaService.getListasPorUsuario(userService.getUserLogado()!!, it)
                     adapter.submitList(novasListas)
                 }
                 return true
@@ -80,11 +78,18 @@ class ListaActivity : AppCompatActivity() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let {
-                    val novasListas = listaService.getListasPorUsuario(userService.getUserLogado()!!, it)
+                    val novasListas =
+                        listaService.getListasPorUsuario(userService.getUserLogado()!!, it)
                     adapter.submitList(novasListas)
                 }
                 return true
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val novasListas = listaService.getListasPorUsuario(userService.getUserLogado()!!)
+        adapter.submitList(novasListas)
     }
 }

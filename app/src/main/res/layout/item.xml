@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="10dp"
-    android:layout_marginTop="20dp"
+    android:layout_marginTop="5dp"
     android:layout_marginEnd="10dp"
     android:background="@drawable/searchview_border"
     android:gravity="center_vertical"
@@ -12,8 +12,8 @@
     <ImageView
         android:id="@+id/imgItem"
         style="@style/App.ImageView2"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:contentDescription="Imagem lista"
         android:padding="15dp"
         android:scaleType="fitCenter"
@@ -28,7 +28,7 @@
 
         <TextView
             android:id="@+id/txtNome"
-            style="@style/App.Titulo"
+            style="@style/App.TituloItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Item"
@@ -36,7 +36,7 @@
 
         <TextView
             android:id="@+id/txtQuantidade"
-            style="@style/App.TituloLista"
+            style="@style/App.ItemQtd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="unidades"
@@ -52,6 +52,7 @@
         android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scaleX="1.5"
-        android:scaleY="1.5" />
+        android:layout_marginEnd="12dp"
+        android:scaleX="1"
+        android:scaleY="1" />
 </LinearLayout>

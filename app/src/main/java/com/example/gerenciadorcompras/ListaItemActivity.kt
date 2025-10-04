@@ -1,8 +1,10 @@
 package com.example.gerenciadorcompras
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.SearchView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -20,6 +22,13 @@ class ListaItemActivity : AppCompatActivity() {
 
     private lateinit var adapter: ItemAdapter
 
+    private var idLista: Int = 0
+
+    private val launcher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -35,10 +44,15 @@ class ListaItemActivity : AppCompatActivity() {
             insets
         }
 
+        val titulo =
+            if (intent.getStringExtra("tituloLista") != null) intent.getStringExtra("tituloLista") else "Lista"
+
+        binding.txtTitulo.text = titulo
+
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = GridLayoutManager(this, 1)
 
-        val idLista = intent.getIntExtra("idLista", 0)
+        idLista = intent.getIntExtra("idLista", 0)
 
         val itens = itemService.getItensListaPorUsuario(userService.getUserLogado()!!, idLista)
 
@@ -47,8 +61,9 @@ class ListaItemActivity : AppCompatActivity() {
         adapter.submitList(itens)
 
         binding.fabAdd.setOnClickListener {
-//            val intent = Intent(this@ListaActivity, CriarListaActivity::class.java)
-//            launcher.launch(intent)
+            val intent = Intent(this@ListaItemActivity, CriarItemActivity::class.java)
+            intent.putExtra("idLista", idLista)
+            launcher.launch(intent)
         }
 
         binding.imageButton.setOnClickListener {
@@ -81,5 +96,12 @@ class ListaItemActivity : AppCompatActivity() {
                 return true
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val novasListas =
+            itemService.getItensListaPorUsuario(userService.getUserLogado()!!, idLista)
+        adapter.submitList(novasListas)
     }
 }

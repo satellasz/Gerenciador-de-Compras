@@ -13,8 +13,8 @@ class CriarItemViewModel(private val service: ItemService) : ViewModel() {
     private val _result = MutableLiveData<AppResult>()
     val result: LiveData<AppResult> get() = _result
 
-    fun criarLista(
-        user: User, nome: String, categoria: ItemCategoria, quantidade: Int, unidade: UnidadeItem,
+    fun criarItem(
+        user: User, nome: String, categoria: ItemCategoria, quantidade: String, unidade: UnidadeItem,
         idLista: Int
     ) {
         val result = service.adicionarItem(user, nome, categoria, quantidade, unidade, idLista)

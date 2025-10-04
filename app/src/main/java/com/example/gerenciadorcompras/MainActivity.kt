@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun clearCampos() {
-        binding.editTextEmail.getText().clear()
-        binding.editTextSenha.getText().clear()
+        binding.editTextEmail.text.clear()
+        binding.editTextSenha.text.clear()
     }
 }

@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.GerenciadorCompras" parent="Theme.MaterialComponents.DayNight.Bridge">
         <item name="colorPrimary">@color/orange</item>
@@ -55,10 +55,29 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="App.TituloItem" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/orange</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="App.ItemQtd" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/background</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="App.FloatingButton" parent="Widget.MaterialComponents.FloatingActionButton">
         <item name="android:backgroundTint">@color/white</item>
         <item name="tint">@color/orange</item>
         <item name="maxImageSize">40dp</item>
+    </style>
+
+    <style name="App.Spinner" parent="Widget.AppCompat.Spinner">
+        <item name="android:dropDownHorizontalOffset">0dp</item>
+        <item name="android:dropDownVerticalOffset">60dp</item>
+        <item name="android:popupBackground">@color/white</item>
+        <item name="android:background">@drawable/edittext_border</item>
     </style>
 
     <style name="Theme.GerenciadorCompras" parent="Base.Theme.GerenciadorCompras" />

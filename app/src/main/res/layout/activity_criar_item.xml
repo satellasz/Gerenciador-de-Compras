@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CriarItemActivity">
+
+    <TextView
+        android:id="@+id/textCriarConta"
+        style="@style/App.Titulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Adicionar item"
+        app:layout_constraintStart_toStartOf="@+id/textNome"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/textNome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="nome"
+        app:layout_constraintStart_toStartOf="@+id/editTextNome"
+        app:layout_constraintTop_toBottomOf="@+id/textCriarConta"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/editTextNome"
+        style="@style/App.EditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autofillHints="emailAddress"
+        android:hint="Nome do Item"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textNome"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/textQtd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="quantidade"
+        app:layout_constraintEnd_toStartOf="@id/textUn"
+        app:layout_constraintStart_toStartOf="@id/editTextNome"
+        app:layout_constraintTop_toBottomOf="@id/editTextNome"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/editTextQtd"
+        style="@style/App.EditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="postalCode"
+        android:hint="123"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="@id/textQtd"
+        app:layout_constraintStart_toStartOf="@id/textQtd"
+        app:layout_constraintTop_toBottomOf="@id/textQtd"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/textUn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="20dp"
+        android:text="unidade"
+        app:layout_constraintEnd_toEndOf="@id/editTextNome"
+        app:layout_constraintStart_toEndOf="@id/textQtd"
+        app:layout_constraintTop_toBottomOf="@id/editTextNome"
+        tools:ignore="HardcodedText" />
+
+    <Spinner
+        android:id="@+id/spinnerUn"
+        style="@style/App.Spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/textUn"
+        app:layout_constraintStart_toStartOf="@id/textUn"
+        app:layout_constraintTop_toBottomOf="@id/textUn" />
+
+    <TextView
+        android:id="@+id/textCate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="categoria"
+        app:layout_constraintStart_toStartOf="@+id/textQtd"
+        app:layout_constraintTop_toBottomOf="@+id/editTextQtd"
+        tools:ignore="HardcodedText" />
+
+    <Spinner
+        android:id="@+id/spinnerCate"
+        style="@style/App.Spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/editTextNome"
+        app:layout_constraintStart_toStartOf="@+id/editTextNome"
+        app:layout_constraintTop_toBottomOf="@+id/textCate" />
+
+    <Button
+        android:id="@+id/buttonCriar"
+        style="@style/App.Button"
+        android:layout_width="@+id/spinnerCate"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30sp"
+        android:text="Criar"
+        app:layout_constraintEnd_toEndOf="@+id/spinnerCate"
+        app:layout_constraintStart_toStartOf="@+id/spinnerCate"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerCate"
+        tools:ignore="HardcodedText" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

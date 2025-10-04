@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gerenciadorcompras.R
 import com.example.gerenciadorcompras.databinding.ItemBinding
 import com.example.gerenciadorcompras.models.Item
 
@@ -21,10 +22,18 @@ class ItemAdapter : ListAdapter<Item, ItemAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-//        with(holder.binding) {
-//            txtItem.text = item.titulo
-//            imgItem.setImageURI(item.logoUri.toUri())
-//        }
+
+        val context = holder.itemView.context
+
+        with(holder.binding) {
+            txtNome.text = item.nome
+            txtQuantidade.text = context.getString(
+                R.string.quantidade_format,
+                item.quantidade,
+                item.unidade.unidade
+            )
+            imgItem.setImageResource(item.categoria.drawableRes)
+        }
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Item>() {
