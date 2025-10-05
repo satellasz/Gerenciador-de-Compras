@@ -35,9 +35,9 @@
         android:layout_height="wrap_content"
         android:autofillHints="emailAddress"
         android:hint="Seu Nome Completo"
-        android:inputType="text"
-        app:layout_constraintStart_toStartOf="parent"
+        android:inputType="textCapSentences"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textNome"
         tools:ignore="HardcodedText" />
 

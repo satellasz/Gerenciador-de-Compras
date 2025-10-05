@@ -1,5 +1,6 @@
 package com.example.gerenciadorcompras
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -8,12 +9,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import com.example.gerenciadorcompras.adapters.CategoriaAdapter
 import com.example.gerenciadorcompras.adapters.UnidadeAdapter
 import com.example.gerenciadorcompras.databinding.ActivityCriarItemBinding
 import com.example.gerenciadorcompras.enums.ItemCategoria
+import com.example.gerenciadorcompras.enums.StatusResult
 import com.example.gerenciadorcompras.enums.UnidadeItem
+import com.example.gerenciadorcompras.models.Item
 import com.example.gerenciadorcompras.singletons.AppContainer.itemService
+import com.example.gerenciadorcompras.singletons.AppContainer.listaService
 import com.example.gerenciadorcompras.singletons.AppContainer.userService
 import com.example.gerenciadorcompras.viewmodels.CriarItemViewModel
 
@@ -38,37 +43,85 @@ class CriarItemActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
-        setupSpinnerCategoria()
+        val idItem = intent.getIntExtra("idItem", 0)
+        val idLista = intent.getIntExtra("idLista", 0)
 
-        setupSpinnerUnidade()
+        val itemSalvo = itemService.encontrarItem(idItem, idLista)
 
         viewModel = CriarItemViewModel(itemService)
 
+        if (itemSalvo != null) {
+            setupSpinnerCategoria(itemSalvo)
+
+            setupSpinnerUnidade(itemSalvo)
+
+            setupEditar(itemSalvo)
+        } else {
+            setupSpinnerCategoria(null)
+
+            setupSpinnerUnidade(null)
+        }
+
         binding.buttonCriar.setOnClickListener {
-            viewModel.criarItem(
-                userService.getUserLogado()!!,
-                binding.editTextNome.text.toString(),
-                itemCategoria,
-                binding.editTextQtd.text.toString(),
-                itemUnidade,
-                intent.getIntExtra("idLista", 0)
-            )
+            if (itemSalvo != null) {
+                viewModel.updateItem(
+                    binding.editTextNome.text.toString(),
+                    itemCategoria,
+                    binding.editTextQtd.text.toString(),
+                    itemUnidade,
+                    itemSalvo.id,
+                    idLista
+                )
+            } else {
+                viewModel.criarItem(
+                    userService.getUserLogado()!!,
+                    binding.editTextNome.text.toString(),
+                    itemCategoria,
+                    binding.editTextQtd.text.toString(),
+                    itemUnidade,
+                    idLista
+                )
+            }
         }
 
         viewModel.result.observe(this) { result ->
-            if (result.success) {
-                Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
-                finish()
-            } else {
-                Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
+            when (result.status) {
+                StatusResult.SALVO -> {
+                    finish()
+                }
+
+                StatusResult.EDITOU -> {
+                    val intent = Intent(this@CriarItemActivity, ListaItemActivity::class.java)
+                    val lista = listaService.encontrarLista(idLista)
+
+                    if (lista != null) {
+                        intent.putExtra("tituloLista", lista.titulo)
+                        intent.putExtra("idLista", lista.id)
+                    }
+
+                    startActivity(intent)
+                }
+
+                else -> {
+                    Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
-    private fun setupSpinnerCategoria() {
+    private fun setupSpinnerCategoria(item: Item?) {
         val spinner = binding.spinnerCate
-        val arrayAdapter = CategoriaAdapter(this, ItemCategoria.entries.toTypedArray())
+        val categorias = ItemCategoria.entries.toTypedArray()
+        val arrayAdapter = CategoriaAdapter(this, categorias)
         spinner.adapter = arrayAdapter
+
+        if (item != null) {
+            val posicao = categorias.indexOf(item.categoria)
+            if (posicao >= 0) {
+                spinner.setSelection(posicao)
+            }
+        }
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -77,9 +130,7 @@ class CriarItemActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                val itemSelecionado = ItemCategoria.entries[position]
-
-                itemCategoria = itemSelecionado
+                itemCategoria = categorias[position]
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -88,10 +139,18 @@ class CriarItemActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupSpinnerUnidade() {
+    private fun setupSpinnerUnidade(item: Item?) {
         val spinner = binding.spinnerUn
-        val arrayAdapter = UnidadeAdapter(this, UnidadeItem.entries.toTypedArray())
+        val unidades = UnidadeItem.entries.toTypedArray()
+        val arrayAdapter = UnidadeAdapter(this, unidades)
         spinner.adapter = arrayAdapter
+
+        if (item != null) {
+            val posicao = unidades.indexOf(item.unidade)
+            if (posicao >= 0) {
+                spinner.setSelection(posicao)
+            }
+        }
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -100,9 +159,7 @@ class CriarItemActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                val itemSelecionado = UnidadeItem.entries[position]
-
-                itemUnidade = itemSelecionado
+                itemUnidade = unidades[position]
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -111,5 +168,18 @@ class CriarItemActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupEditar(item: Item) {
+        binding.textCriarConta.text = this.getString(R.string.texto, "Editar Item")
+        binding.buttonCriar.text = this.getString(R.string.texto, "Salvar")
+        binding.buttonExcluir.isVisible = true
+        binding.buttonExcluir.isClickable = true
+        binding.buttonExcluir.isEnabled = true
 
+        binding.editTextNome.setText(item.nome)
+        binding.editTextQtd.setText(item.quantidade.toString())
+
+        binding.buttonExcluir.setOnClickListener {
+            viewModel.deletarItem(item.id, item.idLista)
+        }
+    }
 }

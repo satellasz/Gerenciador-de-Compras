@@ -14,10 +14,30 @@ class CriarItemViewModel(private val service: ItemService) : ViewModel() {
     val result: LiveData<AppResult> get() = _result
 
     fun criarItem(
-        user: User, nome: String, categoria: ItemCategoria, quantidade: String, unidade: UnidadeItem,
+        user: User,
+        nome: String,
+        categoria: ItemCategoria,
+        quantidade: String,
+        unidade: UnidadeItem,
         idLista: Int
     ) {
         val result = service.adicionarItem(user, nome, categoria, quantidade, unidade, idLista)
+        _result.value = result
+    }
+
+    fun deletarItem(idItem: Int, idLista: Int) {
+        val result = service.deleteItem(idItem, idLista)
+        _result.value = result
+    }
+
+    fun updateItem(
+        nome: String, categoria: ItemCategoria, quantidade: String, unidade: UnidadeItem,
+        idItem: Int, idLista: Int
+    ) {
+        val result = service.updateItem(
+            nome, categoria, quantidade, unidade,
+            idItem, idLista
+        )
         _result.value = result
     }
 }

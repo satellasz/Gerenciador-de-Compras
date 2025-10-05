@@ -14,8 +14,40 @@ class MemoryListaRepository : ListaRepository {
         }
     }
 
+    override fun deleteLista(lista: Lista): Boolean {
+        return try {
+            AppSingleton.deleteLista(lista)
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    override fun deleteItensLista(idLista: Int): Boolean {
+        return try {
+            AppSingleton.deleteItensLista(idLista)
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    override fun updateLista(lista: Lista): Boolean {
+        return try {
+            AppSingleton.deleteLista(lista)
+            AppSingleton.adicionarLista(lista)
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
     override fun encontrarLista(titulo: String): Boolean {
         return AppSingleton.encontrarLista(titulo) != null
+    }
+
+    override fun encontrarLista(idLista: Int): Lista? {
+        return AppSingleton.encontrarLista(idLista)
     }
 
     override fun getListas(): List<Lista> {

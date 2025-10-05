@@ -9,7 +9,11 @@ import com.example.gerenciadorcompras.R
 import com.example.gerenciadorcompras.databinding.ItemBinding
 import com.example.gerenciadorcompras.models.Item
 
-class ItemAdapter : ListAdapter<Item, ItemAdapter.ViewHolder>(DiffCallback()) {
+class ItemAdapter(
+    private val onItemClick: (Item) -> Unit,
+    private val onCheckBoxClick: (Item, Boolean) -> Unit
+) :
+    ListAdapter<Item, ItemAdapter.ViewHolder>(DiffCallback()) {
 
     class ViewHolder(val binding: ItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -32,7 +36,16 @@ class ItemAdapter : ListAdapter<Item, ItemAdapter.ViewHolder>(DiffCallback()) {
                 item.quantidade,
                 item.unidade.unidade
             )
+            checkBox.isChecked = item.marcado
             imgItem.setImageResource(item.categoria.drawableRes)
+
+            root.setOnClickListener {
+                onItemClick(item)
+            }
+
+            checkBox.setOnClickListener {
+                onCheckBoxClick(item, checkBox.isChecked)
+            }
         }
     }
 

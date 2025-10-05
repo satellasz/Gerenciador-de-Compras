@@ -22,6 +22,7 @@ class MemoryItemRepository : ItemRepository {
                     nome, quantidade,
                     unidade,
                     categoria,
+                    false,
                     idLista,
                     user
                 )
@@ -32,8 +33,31 @@ class MemoryItemRepository : ItemRepository {
         }
     }
 
+    override fun deleteItem(item: Item): Boolean {
+        return try {
+            AppSingleton.deleteItem(item)
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    override fun updateItem(item: Item): Boolean {
+        return try {
+            AppSingleton.deleteItem(item)
+            AppSingleton.adicionarItem(item)
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
     override fun encontrarItem(nome: String, idLista: Int): Boolean {
         return AppSingleton.encontrarItem(nome, idLista) != null
+    }
+
+    override fun encontrarItem(idItem: Int, idLista: Int): Item? {
+        return AppSingleton.encontrarItem(idItem, idLista)
     }
 
     override fun getItens(idLista: Int): List<Item> {

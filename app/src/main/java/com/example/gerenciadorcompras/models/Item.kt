@@ -5,10 +5,11 @@ import com.example.gerenciadorcompras.enums.UnidadeItem
 
 data class Item(
     val id: Int,
-    val nome: String,
-    val quantidade: Int,
-    val unidade: UnidadeItem,
-    val categoria: ItemCategoria,
+    var nome: String,
+    var quantidade: Int,
+    var unidade: UnidadeItem,
+    var categoria: ItemCategoria,
+    var marcado: Boolean,
     val idLista: Int,
     val user: User
 )

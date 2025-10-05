@@ -16,4 +16,14 @@ class CriarListaViewModel(private val service: ListaService) : ViewModel() {
         val result = service.adicionarLista(user, titulo, logoUri)
         _result.value = result
     }
+
+    fun deletarLista(idLista: Int) {
+        val result = service.deleteLista(idLista)
+        _result.value = result
+    }
+
+    fun updateLista(titulo: String, logoUri: String, idLista: Int) {
+        val result = service.updateLista(titulo, logoUri, idLista)
+        _result.value = result
+    }
 }

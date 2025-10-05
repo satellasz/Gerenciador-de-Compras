@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.gerenciadorcompras.databinding.ActivityCriarContaBinding
+import com.example.gerenciadorcompras.enums.StatusResult
 import com.example.gerenciadorcompras.singletons.AppContainer.userService
 import com.example.gerenciadorcompras.viewmodels.CriarContaViewModel
 
@@ -42,7 +43,7 @@ class CriarContaAcitvity : AppCompatActivity() {
         }
 
         viewModel.result.observe(this) { result ->
-            if (result.success) {
+            if (result.status == StatusResult.SALVO) {
                 Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
                 finish()
             } else {

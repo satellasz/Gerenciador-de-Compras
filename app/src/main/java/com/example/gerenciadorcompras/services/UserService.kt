@@ -1,6 +1,7 @@
 package com.example.gerenciadorcompras.services
 
 import android.util.Patterns
+import com.example.gerenciadorcompras.enums.StatusResult
 import com.example.gerenciadorcompras.models.AppResult
 import com.example.gerenciadorcompras.models.User
 import com.example.gerenciadorcompras.repositories.UserRepository
@@ -13,26 +14,26 @@ class UserService(private val userRepository: UserRepository) {
         confirmPassword: String
     ): AppResult {
         if (username.isBlank() || email.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
-            return AppResult(false, "Campos obrigatórios devem ser preenchidos")
+            return AppResult(StatusResult.ERRO, "Campos obrigatórios devem ser preenchidos")
         }
 
         val userExiste = userRepository.encontrarUserPorEmail(email)
 
         if (userExiste) {
-            return AppResult(false, "E-mail já está cadastrado")
+            return AppResult(StatusResult.ERRO, "E-mail já está cadastrado")
         }
 
         if (password != confirmPassword) {
-            return AppResult(false, "Senhas não batem")
+            return AppResult(StatusResult.ERRO, "Senhas não batem")
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            return AppResult(false, "E-mail inválido")
+            return AppResult(StatusResult.ERRO, "E-mail inválido")
         }
 
         val success = userRepository.adicionarUser(username, email, password)
-        return if (success) AppResult(true, "Conta criada com sucesso!", username)
-        else AppResult(false, "Erro ao criar a conta")
+        return if (success) AppResult(StatusResult.SALVO, "Conta criada com sucesso!", username)
+        else AppResult(StatusResult.ERRO, "Erro ao criar a conta")
     }
 
     fun getUserLogado(): User? {

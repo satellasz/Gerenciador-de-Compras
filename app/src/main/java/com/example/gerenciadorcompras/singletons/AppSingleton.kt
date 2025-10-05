@@ -32,8 +32,20 @@ object AppSingleton {
         listas.add(lista)
     }
 
+    fun deleteLista(lista: Lista?) {
+        listas.remove(lista)
+    }
+
+    fun deleteItensLista(idLista: Int) {
+        itens.removeIf { it.idLista == idLista }
+    }
+
     fun encontrarLista(titulo: String): Lista? {
         return listas.find { it.titulo == titulo }
+    }
+
+    fun encontrarLista(idLista: Int): Lista? {
+        return listas.find { it.id == idLista }
     }
 
     fun getListas(): List<Lista> {
@@ -48,8 +60,16 @@ object AppSingleton {
         return itens.find { it.nome == nome && it.idLista == idLista }
     }
 
+    fun encontrarItem(idItem: Int, idLista: Int): Item? {
+        return itens.find { it.id == idItem && it.idLista == idLista }
+    }
+
     fun getItens(idLista: Int): List<Item> {
         return itens.filter { it.idLista == idLista }
+    }
+
+    fun deleteItem(item: Item?) {
+        itens.remove(item)
     }
 
 }

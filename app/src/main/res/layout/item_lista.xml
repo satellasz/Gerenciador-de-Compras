@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:contentDescription="Imagem lista"
-        android:padding="2dp"
+        android:padding="3dp"
         android:scaleType="fitCenter"
         tools:src="@drawable/carrinho"
         tools:ignore="HardcodedText" />

@@ -6,6 +6,9 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.example.gerenciadorcompras.databinding.ItemListaBinding
 import com.example.gerenciadorcompras.models.Lista
 
@@ -25,7 +28,10 @@ class ListaAdapter(private val onItemClick: (Lista) -> Unit) :
         val item = getItem(position)
         with(holder.binding) {
             txtItem.text = item.titulo
-            imgItem.setImageURI(item.logoUri.toUri())
+            Glide.with(root)
+                .load(item.logoUri.toUri())
+                .centerCrop()
+                .into(imgItem)
 
             root.setOnClickListener {
                 onItemClick(item)

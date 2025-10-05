@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:autofillHints="emailAddress"
         android:hint="Nome do Item"
-        android:inputType="text"
+        android:inputType="textCapSentences"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textNome"
@@ -115,6 +115,21 @@
         app:layout_constraintEnd_toEndOf="@+id/spinnerCate"
         app:layout_constraintStart_toStartOf="@+id/spinnerCate"
         app:layout_constraintTop_toBottomOf="@+id/spinnerCate"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/buttonExcluir"
+        style="@style/App.ButtonRed"
+        android:layout_width="@+id/editTextNome"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15sp"
+        android:clickable="false"
+        android:enabled="false"
+        android:text="Excluir"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/editTextNome"
+        app:layout_constraintStart_toStartOf="@+id/editTextNome"
+        app:layout_constraintTop_toBottomOf="@+id/buttonCriar"
         tools:ignore="HardcodedText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

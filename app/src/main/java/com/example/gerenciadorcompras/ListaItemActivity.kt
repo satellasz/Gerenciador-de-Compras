@@ -13,12 +13,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gerenciadorcompras.adapters.ItemAdapter
 import com.example.gerenciadorcompras.databinding.ActivityListaItemBinding
 import com.example.gerenciadorcompras.singletons.AppContainer.itemService
-import com.example.gerenciadorcompras.singletons.AppContainer.loginService
 import com.example.gerenciadorcompras.singletons.AppContainer.userService
+import com.example.gerenciadorcompras.viewmodels.ListaItemViewModel
 
 class ListaItemActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var binding: ActivityListaItemBinding
+    private lateinit var viewModel: ListaItemViewModel
 
     private lateinit var adapter: ItemAdapter
 
@@ -56,7 +57,21 @@ class ListaItemActivity : AppCompatActivity() {
 
         val itens = itemService.getItensListaPorUsuario(userService.getUserLogado()!!, idLista)
 
-        adapter = ItemAdapter()
+        viewModel = ListaItemViewModel(itemService)
+
+        adapter = ItemAdapter(onItemClick = { item ->
+            val intent = Intent(this@ListaItemActivity, CriarItemActivity::class.java)
+            intent.putExtra("idItem", item.id)
+            intent.putExtra("idLista", item.idLista)
+            launcher.launch(intent)
+        },
+            onCheckBoxClick = { item, isMarcado ->
+                viewModel.updateMarcado(item, isMarcado)
+                val novasListas =
+                    itemService.getItensListaPorUsuario(userService.getUserLogado()!!, idLista)
+                adapter.submitList(novasListas)
+            })
+
         recyclerView.adapter = adapter
         adapter.submitList(itens)
 
@@ -67,8 +82,9 @@ class ListaItemActivity : AppCompatActivity() {
         }
 
         binding.imageButton.setOnClickListener {
-            loginService.logout()
-            finish()
+            val intent = Intent(this@ListaItemActivity, CriarListaActivity::class.java)
+            intent.putExtra("idLista", idLista)
+            launcher.launch(intent)
         }
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
