@@ -3,6 +3,7 @@ package com.example.gerenciadorcompras
 import android.content.Intent
 import android.os.Bundle
 import android.widget.SearchView
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +36,10 @@ class ListaActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
+        onBackPressedDispatcher.addCallback(this) {
+            voltarTela()
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -62,8 +67,7 @@ class ListaActivity : AppCompatActivity() {
         }
 
         binding.imageButton.setOnClickListener {
-            loginService.logout()
-            finish()
+            voltarTela()
         }
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -91,5 +95,11 @@ class ListaActivity : AppCompatActivity() {
         super.onResume()
         val novasListas = listaService.getListasPorUsuario(userService.getUserLogado()!!)
         adapter.submitList(novasListas)
+    }
+
+    private fun voltarTela() {
+        loginService.logout()
+        val intent = Intent(this@ListaActivity, MainActivity::class.java)
+        launcher.launch(intent)
     }
 }

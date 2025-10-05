@@ -7,15 +7,29 @@
     android:layout_height="match_parent"
     tools:context=".ListaItemActivity">
 
+    <ImageButton
+        android:id="@+id/imageButtonVoltar"
+        style="@style/App.ImageButton"
+        android:layout_marginEnd="10sp"
+        android:background="@android:color/transparent"
+        android:contentDescription="Ícone editar"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/searchView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/searchView"
+        app:layout_constraintTop_toTopOf="@+id/searchView"
+        app:srcCompat="?attr/actionModeCloseDrawable"
+        app:tint="@color/orange"
+        tools:ignore="HardcodedText" />
+
     <SearchView
         android:id="@+id/searchView"
         style="@style/App.SearchView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30sp"
-        android:layout_marginEnd="30sp"
         android:iconifiedByDefault="false"
-        android:maxWidth="300dp"
+        android:maxWidth="280dp"
         android:queryHint="Buscar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,8 +37,7 @@
 
     <ImageButton
         android:id="@+id/imageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/App.ImageButton"
         android:background="@android:color/transparent"
         android:contentDescription="Ícone editar"
         app:layout_constraintBottom_toBottomOf="@+id/searchView"

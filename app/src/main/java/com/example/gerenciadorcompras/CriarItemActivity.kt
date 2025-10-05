@@ -87,7 +87,7 @@ class CriarItemActivity : AppCompatActivity() {
         viewModel.result.observe(this) { result ->
             Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
             when (result.status) {
-                StatusResult.SALVO -> {
+                StatusResult.SALVO, StatusResult.DELETOU -> {
                     finish()
                 }
 

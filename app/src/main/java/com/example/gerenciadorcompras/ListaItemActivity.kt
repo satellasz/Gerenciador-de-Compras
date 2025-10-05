@@ -3,6 +3,7 @@ package com.example.gerenciadorcompras
 import android.content.Intent
 import android.os.Bundle
 import android.widget.SearchView
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gerenciadorcompras.adapters.ItemAdapter
 import com.example.gerenciadorcompras.databinding.ActivityListaItemBinding
 import com.example.gerenciadorcompras.singletons.AppContainer.itemService
+import com.example.gerenciadorcompras.singletons.AppContainer.loginService
 import com.example.gerenciadorcompras.singletons.AppContainer.userService
 import com.example.gerenciadorcompras.viewmodels.ListaItemViewModel
 
@@ -39,21 +41,25 @@ class ListaItemActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
+        val titulo =
+            if (intent.getStringExtra("tituloLista") != null) intent.getStringExtra("tituloLista") else "Lista"
+
+        idLista = intent.getIntExtra("idLista", 0)
+
+        onBackPressedDispatcher.addCallback(this) {
+            voltarTela(idLista, titulo)
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        val titulo =
-            if (intent.getStringExtra("tituloLista") != null) intent.getStringExtra("tituloLista") else "Lista"
-
         binding.txtTitulo.text = titulo
 
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = GridLayoutManager(this, 1)
-
-        idLista = intent.getIntExtra("idLista", 0)
 
         val itens = itemService.getItensListaPorUsuario(userService.getUserLogado()!!, idLista)
 
@@ -79,6 +85,10 @@ class ListaItemActivity : AppCompatActivity() {
             val intent = Intent(this@ListaItemActivity, CriarItemActivity::class.java)
             intent.putExtra("idLista", idLista)
             launcher.launch(intent)
+        }
+
+        binding.imageButtonVoltar.setOnClickListener {
+            voltarTela(idLista, titulo)
         }
 
         binding.imageButton.setOnClickListener {
@@ -119,5 +129,12 @@ class ListaItemActivity : AppCompatActivity() {
         val novasListas =
             itemService.getItensListaPorUsuario(userService.getUserLogado()!!, idLista)
         adapter.submitList(novasListas)
+    }
+
+    private fun voltarTela(idLista: Int, titulo: String?) {
+        val intent = Intent(this@ListaItemActivity, ListaActivity::class.java)
+        intent.putExtra("tituloLista", titulo)
+        intent.putExtra("idLista", idLista)
+        launcher.launch(intent)
     }
 }
