@@ -6,6 +6,7 @@ import com.example.gerenciadorcompras.enums.StatusResult
 import com.example.gerenciadorcompras.models.AppResult
 import com.example.gerenciadorcompras.models.User
 import com.example.gerenciadorcompras.models.UserResult
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 
 class UserRepository(
     private val memory: UserDataSource,
@@ -50,6 +51,8 @@ class UserRepository(
             )
 
             AppResult(StatusResult.SALVO, "Conta criada com sucesso!", username)
+        } catch (_: FirebaseAuthWeakPasswordException) {
+            AppResult(StatusResult.ERRO, "Senha muito fraca. Necessário ter, pelo menos, 6 caracteres")
         } catch (e: Exception) {
             AppResult(StatusResult.ERRO, e.message)
         }

@@ -7,13 +7,13 @@ import com.example.gerenciadorcompras.enums.UnidadeItem
 import com.example.gerenciadorcompras.models.AppResult
 import com.example.gerenciadorcompras.models.User
 import com.example.gerenciadorcompras.repositories.ItemRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 class CriarItemViewModel(private val repository: ItemRepository) : ViewModel() {
-    private val _result = MutableStateFlow<AppResult?>(null)
-    val result: StateFlow<AppResult?> get() = _result
+    private val _result = MutableSharedFlow<AppResult?>()
+    val result: SharedFlow<AppResult?> get() = _result
 
     fun criarItem(
         user: User,
@@ -26,14 +26,14 @@ class CriarItemViewModel(private val repository: ItemRepository) : ViewModel() {
         viewModelScope.launch {
             val result =
                 repository.adicionarItem(user, nome, categoria, quantidade, unidade, idLista)
-            _result.value = result
+            _result.emit(result)
         }
     }
 
     fun deletarItem(idItem: Int, idLista: Int) {
         viewModelScope.launch {
             val result = repository.deleteItem(idItem, idLista)
-            _result.value = result
+            _result.emit(result)
         }
     }
 
@@ -46,7 +46,7 @@ class CriarItemViewModel(private val repository: ItemRepository) : ViewModel() {
                 nome, categoria, quantidade, unidade,
                 idItem, idLista
             )
-            _result.value = result
+            _result.emit(result)
         }
     }
 }

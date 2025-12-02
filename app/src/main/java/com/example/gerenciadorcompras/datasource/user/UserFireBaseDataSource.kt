@@ -23,12 +23,13 @@ class UserFireBaseDataSource(
         email: String,
         password: String
     ): User? {
+        val user: User
         val authResult = auth.createUserWithEmailAndPassword(email, password).await()
         val firebaseUser =
             authResult.user ?: throw Exception("Usuário não encontrado na criação")
 
         try {
-            val user = User(
+             user = User(
                 id = firebaseUser.uid.hashCode().absoluteValue,
                 username = username,
                 email = email,
@@ -41,12 +42,11 @@ class UserFireBaseDataSource(
                 .await()
 
             user
-        } catch (firestoreError: Exception) {
+        } catch (e: Exception) {
             firebaseUser.delete().await()
-            throw firestoreError
+            throw e
         }
-
-        return null
+        return user
     }
 
     override suspend fun encontrarUser(

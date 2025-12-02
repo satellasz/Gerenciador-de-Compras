@@ -16,6 +16,9 @@
         android:layout_height="150dp"
         android:contentDescription="Imagem lista"
         android:padding="3dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:scaleType="fitCenter"
         tools:src="@drawable/carrinho"
         tools:ignore="HardcodedText" />

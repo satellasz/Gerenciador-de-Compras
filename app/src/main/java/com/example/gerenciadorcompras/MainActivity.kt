@@ -14,8 +14,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.gerenciadorcompras.databinding.ActivityMainBinding
+import com.example.gerenciadorcompras.models.UserResult
 import com.example.gerenciadorcompras.singletons.AppContainer.userRepository
 import com.example.gerenciadorcompras.viewmodels.LoginViewModel
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -73,27 +75,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.loginResult.collect { result ->
                     if (result == null) return@collect
 
-                    try {
-                        if (result.success) {
-                            userRepository.login(result.user!!)
-                            clearCampos()
-                            Toast.makeText(
-                                this@MainActivity,
-                                "Login feito com sucesso",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            val intent = Intent(this@MainActivity, ListaActivity::class.java)
-                            launcher.launch(intent)
-                        } else {
-                            Toast.makeText(
-                                this@MainActivity,
-                                "Usuário/senhas inválidos",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    } catch (e: Exception) {
-                        Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_SHORT).show()
-                    }
+                    handlerLoginResult(result)
                 }
             }
         }
@@ -118,5 +100,29 @@ class MainActivity : AppCompatActivity() {
             userRepository.logout()
         }
         moveTaskToBack(true)
+    }
+
+    private suspend fun handlerLoginResult(result: UserResult) {
+        try {
+            if (result.success) {
+                userRepository.login(result.user!!)
+                clearCampos()
+                showToast("Login feito com sucesso")
+
+                launcher.launch(
+                    Intent(this, ListaActivity::class.java)
+                )
+            } else {
+                showToast("Usuário/senhas inválidos")
+            }
+        } catch (_: FirebaseAuthInvalidUserException) {
+            showToast("Usuário atualmente está indisponível no servidor")
+        } catch (e: Exception) {
+            showToast(e.message ?: "Erro desconhecido")
+        }
+    }
+
+    private fun showToast(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 }
