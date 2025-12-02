@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.gerenciadorcompras.adapters.CategoriaAdapter
 import com.example.gerenciadorcompras.adapters.UnidadeAdapter
 import com.example.gerenciadorcompras.databinding.ActivityCriarItemBinding
@@ -17,10 +20,11 @@ import com.example.gerenciadorcompras.enums.ItemCategoria
 import com.example.gerenciadorcompras.enums.StatusResult
 import com.example.gerenciadorcompras.enums.UnidadeItem
 import com.example.gerenciadorcompras.models.Item
-import com.example.gerenciadorcompras.singletons.AppContainer.itemService
-import com.example.gerenciadorcompras.singletons.AppContainer.listaService
-import com.example.gerenciadorcompras.singletons.AppContainer.userService
+import com.example.gerenciadorcompras.singletons.AppContainer.itemRepository
+import com.example.gerenciadorcompras.singletons.AppContainer.listaRepository
+import com.example.gerenciadorcompras.singletons.AppContainer.userRepository
 import com.example.gerenciadorcompras.viewmodels.CriarItemViewModel
+import kotlinx.coroutines.launch
 
 class CriarItemActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCriarItemBinding
@@ -46,65 +50,45 @@ class CriarItemActivity : AppCompatActivity() {
         val idItem = intent.getIntExtra("idItem", 0)
         val idLista = intent.getIntExtra("idLista", 0)
 
-        val itemSalvo = itemService.encontrarItem(idItem, idLista)
+        setupSpinners(idItem, idLista)
 
-        viewModel = CriarItemViewModel(itemService)
+        viewModel = CriarItemViewModel(itemRepository)
 
-        if (itemSalvo != null) {
-            setupSpinnerCategoria(itemSalvo)
+        setupBotaoCriar(idItem, idLista)
 
-            setupSpinnerUnidade(itemSalvo)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.result.collect { result ->
+                    if (result == null) return@collect
 
-            setupEditar(itemSalvo)
-        } else {
-            setupSpinnerCategoria(null)
+                    Toast.makeText(this@CriarItemActivity, result.message, Toast.LENGTH_SHORT)
+                        .show()
+                    when (result.status) {
+                        StatusResult.SALVO, StatusResult.DELETOU -> {
+                            finish()
+                        }
 
-            setupSpinnerUnidade(null)
-        }
+                        StatusResult.EDITOU -> {
+                            val intent =
+                                Intent(this@CriarItemActivity, ListaItemActivity::class.java)
+                            val lista = listaRepository.encontrarLista(idLista)
 
-        binding.buttonCriar.setOnClickListener {
-            if (itemSalvo != null) {
-                viewModel.updateItem(
-                    binding.editTextNome.text.toString(),
-                    itemCategoria,
-                    binding.editTextQtd.text.toString(),
-                    itemUnidade,
-                    itemSalvo.id,
-                    idLista
-                )
-            } else {
-                viewModel.criarItem(
-                    userService.getUserLogado()!!,
-                    binding.editTextNome.text.toString(),
-                    itemCategoria,
-                    binding.editTextQtd.text.toString(),
-                    itemUnidade,
-                    idLista
-                )
-            }
-        }
+                            if (lista != null) {
+                                intent.putExtra("tituloLista", lista.titulo)
+                                intent.putExtra("idLista", lista.id)
+                            }
 
-        viewModel.result.observe(this) { result ->
-            Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
-            when (result.status) {
-                StatusResult.SALVO, StatusResult.DELETOU -> {
-                    finish()
-                }
+                            startActivity(intent)
+                        }
 
-                StatusResult.EDITOU -> {
-                    val intent = Intent(this@CriarItemActivity, ListaItemActivity::class.java)
-                    val lista = listaService.encontrarLista(idLista)
-
-                    if (lista != null) {
-                        intent.putExtra("tituloLista", lista.titulo)
-                        intent.putExtra("idLista", lista.id)
+                        else -> {
+                            Toast.makeText(
+                                this@CriarItemActivity,
+                                result.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
-
-                    startActivity(intent)
-                }
-
-                else -> {
-                    Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -180,6 +164,50 @@ class CriarItemActivity : AppCompatActivity() {
 
         binding.buttonExcluir.setOnClickListener {
             viewModel.deletarItem(item.id, item.idLista)
+        }
+    }
+
+    private fun setupBotaoCriar(idItem: Int, idLista: Int) {
+        binding.buttonCriar.setOnClickListener {
+            lifecycleScope.launch {
+                val itemSalvo = itemRepository.encontrarItem(idItem, idLista)
+                if (itemSalvo != null) {
+                    viewModel.updateItem(
+                        binding.editTextNome.text.toString(),
+                        itemCategoria,
+                        binding.editTextQtd.text.toString(),
+                        itemUnidade,
+                        itemSalvo.id,
+                        idLista
+                    )
+                } else {
+                    viewModel.criarItem(
+                        userRepository.getUserLogado()!!,
+                        binding.editTextNome.text.toString(),
+                        itemCategoria,
+                        binding.editTextQtd.text.toString(),
+                        itemUnidade,
+                        idLista
+                    )
+                }
+            }
+        }
+    }
+
+    private fun setupSpinners(idItem: Int, idLista: Int) {
+        lifecycleScope.launch {
+            val itemSalvo = itemRepository.encontrarItem(idItem, idLista)
+            if (itemSalvo != null) {
+                setupSpinnerCategoria(itemSalvo)
+
+                setupSpinnerUnidade(itemSalvo)
+
+                setupEditar(itemSalvo)
+            } else {
+                setupSpinnerCategoria(null)
+
+                setupSpinnerUnidade(null)
+            }
         }
     }
 }

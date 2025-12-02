@@ -9,13 +9,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gerenciadorcompras.adapters.ListaAdapter
 import com.example.gerenciadorcompras.databinding.ActivityListaBinding
-import com.example.gerenciadorcompras.singletons.AppContainer.listaService
-import com.example.gerenciadorcompras.singletons.AppContainer.loginService
-import com.example.gerenciadorcompras.singletons.AppContainer.userService
+import com.example.gerenciadorcompras.singletons.AppContainer.listaRepository
+import com.example.gerenciadorcompras.singletons.AppContainer.userRepository
+import kotlinx.coroutines.launch
 
 class ListaActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
@@ -49,8 +50,6 @@ class ListaActivity : AppCompatActivity() {
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 
-        val listas = listaService.getListasPorUsuario(userService.getUserLogado()!!)
-
         adapter = ListaAdapter { lista ->
             val intent = Intent(this@ListaActivity, ListaItemActivity::class.java)
             intent.putExtra("tituloLista", lista.titulo)
@@ -58,8 +57,11 @@ class ListaActivity : AppCompatActivity() {
             launcher.launch(intent)
         }
 
-        recyclerView.adapter = adapter
-        adapter.submitList(listas)
+        lifecycleScope.launch {
+            val listas = listaRepository.getListasPorUsuario(userRepository.getUserLogado()!!)
+            recyclerView.adapter = adapter
+            adapter.submitList(listas)
+        }
 
         binding.fabAdd.setOnClickListener {
             val intent = Intent(this@ListaActivity, CriarListaActivity::class.java)
@@ -73,18 +75,28 @@ class ListaActivity : AppCompatActivity() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
-                    val novasListas =
-                        listaService.getListasPorUsuario(userService.getUserLogado()!!, it)
-                    adapter.submitList(novasListas)
+                    lifecycleScope.launch {
+                        val novasListas =
+                            listaRepository.getListasPorUsuario(
+                                userRepository.getUserLogado()!!,
+                                it
+                            )
+                        adapter.submitList(novasListas)
+                    }
                 }
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let {
-                    val novasListas =
-                        listaService.getListasPorUsuario(userService.getUserLogado()!!, it)
-                    adapter.submitList(novasListas)
+                    lifecycleScope.launch {
+                        val novasListas =
+                            listaRepository.getListasPorUsuario(
+                                userRepository.getUserLogado()!!,
+                                it
+                            )
+                        adapter.submitList(novasListas)
+                    }
                 }
                 return true
             }
@@ -93,13 +105,17 @@ class ListaActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val novasListas = listaService.getListasPorUsuario(userService.getUserLogado()!!)
-        adapter.submitList(novasListas)
+        lifecycleScope.launch {
+            val novasListas = listaRepository.getListasPorUsuario(userRepository.getUserLogado()!!)
+            adapter.submitList(novasListas)
+        }
     }
 
     private fun voltarTela() {
-        loginService.logout()
-        val intent = Intent(this@ListaActivity, MainActivity::class.java)
-        launcher.launch(intent)
+        lifecycleScope.launch {
+            userRepository.logout()
+            val intent = Intent(this@ListaActivity, MainActivity::class.java)
+            launcher.launch(intent)
+        }
     }
 }

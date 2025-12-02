@@ -28,6 +28,11 @@ object AppSingleton {
         return users
     }
 
+    fun setLista(lista: List<Lista>) {
+        listas.clear()
+        listas.addAll(lista)
+    }
+
     fun adicionarLista(lista: Lista) {
         listas.add(lista)
     }
@@ -50,6 +55,11 @@ object AppSingleton {
 
     fun getListas(): List<Lista> {
         return listas
+    }
+
+    fun setItens(lista: List<Item>) {
+        itens.clear()
+        itens.addAll(lista)
     }
 
     fun adicionarItem(item: Item) {

@@ -34,10 +34,10 @@ class ItemAdapter(
             txtQuantidade.text = context.getString(
                 R.string.quantidade_format,
                 item.quantidade,
-                item.unidade.unidade
+                item.unidade?.unidade
             )
             checkBox.isChecked = item.marcado
-            imgItem.setImageResource(item.categoria.drawableRes)
+            imgItem.setImageResource(item.categoria!!.drawableRes)
 
             root.setOnClickListener {
                 onItemClick(item)

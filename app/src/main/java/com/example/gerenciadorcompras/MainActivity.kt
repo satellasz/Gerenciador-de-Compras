@@ -4,15 +4,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.gerenciadorcompras.databinding.ActivityMainBinding
-import com.example.gerenciadorcompras.repositories.MemoryUserRepository
-import com.example.gerenciadorcompras.services.LoginService
+import com.example.gerenciadorcompras.singletons.AppContainer.userRepository
 import com.example.gerenciadorcompras.viewmodels.LoginViewModel
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -40,16 +44,17 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
+        onBackPressedDispatcher.addCallback(this) {
+            logout()
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        val repository = MemoryUserRepository()
-        val service = LoginService(repository)
-
-        viewModel = LoginViewModel(service)
+        viewModel = LoginViewModel(userRepository)
 
         binding.buttonAcessar.setOnClickListener {
             viewModel.login(
@@ -63,15 +68,33 @@ class MainActivity : AppCompatActivity() {
             launcher.launch(intent)
         }
 
-        viewModel.loginResult.observe(this) { success ->
-            if (success.success) {
-                service.login(success.user!!)
-                clearCampos()
-                Toast.makeText(this, "Login feito com sucesso", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this@MainActivity, ListaActivity::class.java)
-                launcher.launch(intent)
-            } else {
-                Toast.makeText(this, "Usuário/senhas inválidos", Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loginResult.collect { result ->
+                    if (result == null) return@collect
+
+                    try {
+                        if (result.success) {
+                            userRepository.login(result.user!!)
+                            clearCampos()
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Login feito com sucesso",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            val intent = Intent(this@MainActivity, ListaActivity::class.java)
+                            launcher.launch(intent)
+                        } else {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Usuário/senhas inválidos",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
@@ -87,5 +110,13 @@ class MainActivity : AppCompatActivity() {
     private fun clearCampos() {
         binding.editTextEmail.text.clear()
         binding.editTextSenha.text.clear()
+    }
+
+    private fun logout() {
+        lifecycleScope.launch {
+            clearCampos()
+            userRepository.logout()
+        }
+        moveTaskToBack(true)
     }
 }

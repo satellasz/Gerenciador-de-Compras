@@ -4,12 +4,12 @@ import com.example.gerenciadorcompras.enums.ItemCategoria
 import com.example.gerenciadorcompras.enums.UnidadeItem
 
 data class Item(
-    val id: Int,
-    var nome: String,
-    var quantidade: Int,
-    var unidade: UnidadeItem,
-    var categoria: ItemCategoria,
-    var marcado: Boolean,
-    val idLista: Int,
-    val user: User
+    val id: Int = 0,
+    var nome: String = "",
+    var quantidade: Int = 0,
+    var unidade: UnidadeItem? = null,
+    var categoria: ItemCategoria? = null,
+    var marcado: Boolean = false,
+    val idLista: Int = 0,
+    val user: User? = null
 )

@@ -1,18 +1,21 @@
 package com.example.gerenciadorcompras.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.gerenciadorcompras.models.AppResult
-import com.example.gerenciadorcompras.services.UserService
+import com.example.gerenciadorcompras.repositories.UserRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class CriarContaViewModel(private val service: UserService) : ViewModel() {
-
-    private val _result = MutableLiveData<AppResult>()
-    val result: LiveData<AppResult> get() = _result
+class CriarContaViewModel(private val repository: UserRepository) : ViewModel() {
+    private val _result = MutableStateFlow<AppResult?>(null)
+    val result: StateFlow<AppResult?> = _result
 
     fun criarConta(username: String, email: String, password: String, confirmPassword: String) {
-        val result = service.criarConta(username, email, password, confirmPassword)
-        _result.value = result
+        viewModelScope.launch {
+            val result = repository.criarConta(username, email, password, confirmPassword)
+            _result.value = result
+        }
     }
 }

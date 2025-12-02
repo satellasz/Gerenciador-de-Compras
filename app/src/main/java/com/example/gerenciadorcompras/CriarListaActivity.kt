@@ -9,14 +9,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.example.gerenciadorcompras.databinding.ActivityCriarListaBinding
 import com.example.gerenciadorcompras.enums.StatusResult
 import com.example.gerenciadorcompras.models.Lista
 import com.example.gerenciadorcompras.services.ImageService
-import com.example.gerenciadorcompras.singletons.AppContainer.listaService
-import com.example.gerenciadorcompras.singletons.AppContainer.userService
+import com.example.gerenciadorcompras.singletons.AppContainer.listaRepository
+import com.example.gerenciadorcompras.singletons.AppContainer.userRepository
 import com.example.gerenciadorcompras.viewmodels.CriarListaViewModel
+import kotlinx.coroutines.launch
 
 class CriarListaActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCriarListaBinding
@@ -34,13 +38,7 @@ class CriarListaActivity : AppCompatActivity() {
 
         val idLista = intent.getIntExtra("idLista", 0)
 
-        val listaSalva = listaService.encontrarLista(idLista)
-
-        if (listaSalva != null) {
-            setupEditar(listaSalva)
-        }
-
-        viewModel = CriarListaViewModel(listaService)
+        viewModel = CriarListaViewModel(listaRepository)
 
         imagePicker = ImageService(this) { uri ->
             photoUri = uri
@@ -55,52 +53,45 @@ class CriarListaActivity : AppCompatActivity() {
             }
         }
 
-        binding.buttonCriar.setOnClickListener {
-            val uriParaSalvar = photoUri?.toString()
-                ?: "android.resource://${packageName}/drawable/carrinho".toUri().toString()
+        lifecycleScope.launch {
+            if (idLista != 0) {
+                val listaSalva = listaRepository.encontrarLista(idLista)
 
-            if (listaSalva != null) {
-                viewModel.updateLista(
-                    binding.editTextNome.text.toString(),
-                    uriParaSalvar, idLista
-                )
-            } else {
-                viewModel.criarLista(
-                    userService.getUserLogado()!!,
-                    binding.editTextNome.text.toString(),
-                    uriParaSalvar
-                )
+                if (listaSalva != null) {
+                    setupEditar(listaSalva)
+                }
             }
         }
 
-        binding.fabCam.setOnClickListener {
-            val options = arrayOf("Tirar Foto", "Escolher da Galeria")
+        setupBotaoCriar(idLista)
 
-            AlertDialog.Builder(this)
-                .setTitle("Selecionar Imagem")
-                .setItems(options) { _, which ->
-                    when (which) {
-                        0 -> imagePicker.checkCameraPermission()
-                        1 -> imagePicker.checkGalleryPermission()
+        setupBotaoCam()
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.result.collect { result ->
+                    if (result == null) return@collect
+
+                    Toast.makeText(this@CriarListaActivity, result.message, Toast.LENGTH_SHORT)
+                        .show()
+                    when (result.status) {
+                        StatusResult.SALVO -> {
+                            finish()
+                        }
+
+                        StatusResult.DELETOU, StatusResult.EDITOU -> {
+                            val intent = Intent(this@CriarListaActivity, ListaActivity::class.java)
+                            startActivity(intent)
+                        }
+
+                        else -> {
+                            Toast.makeText(
+                                this@CriarListaActivity,
+                                result.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
-                }
-                .show()
-        }
-
-        viewModel.result.observe(this) { result ->
-            Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
-            when (result.status) {
-                StatusResult.SALVO -> {
-                    finish()
-                }
-
-                StatusResult.DELETOU, StatusResult.EDITOU -> {
-                    val intent = Intent(this@CriarListaActivity, ListaActivity::class.java)
-                    startActivity(intent)
-                }
-
-                else -> {
-                    Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -122,6 +113,43 @@ class CriarListaActivity : AppCompatActivity() {
 
         binding.buttonExcluir.setOnClickListener {
             viewModel.deletarLista(lista.id)
+        }
+    }
+
+    private fun setupBotaoCriar(idLista: Int) {
+        binding.buttonCriar.setOnClickListener {
+            val uriParaSalvar = photoUri?.toString()
+                ?: "android.resource://${packageName}/drawable/carrinho".toUri().toString()
+            lifecycleScope.launch {
+                if (idLista != 0 && listaRepository.encontrarLista(idLista) != null) {
+                    viewModel.updateLista(
+                        binding.editTextNome.text.toString(),
+                        uriParaSalvar, idLista
+                    )
+                } else {
+                    viewModel.criarLista(
+                        userRepository.getUserLogado()!!,
+                        binding.editTextNome.text.toString(),
+                        uriParaSalvar
+                    )
+                }
+            }
+        }
+    }
+
+    private fun setupBotaoCam() {
+        binding.fabCam.setOnClickListener {
+            val options = arrayOf("Tirar Foto", "Escolher da Galeria")
+
+            AlertDialog.Builder(this)
+                .setTitle("Selecionar Imagem")
+                .setItems(options) { _, which ->
+                    when (which) {
+                        0 -> imagePicker.checkCameraPermission()
+                        1 -> imagePicker.checkGalleryPermission()
+                    }
+                }
+                .show()
         }
     }
 }

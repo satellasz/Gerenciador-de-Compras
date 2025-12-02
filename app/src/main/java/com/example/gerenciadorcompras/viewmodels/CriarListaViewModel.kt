@@ -1,29 +1,44 @@
 package com.example.gerenciadorcompras.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.gerenciadorcompras.enums.StatusResult
 import com.example.gerenciadorcompras.models.AppResult
 import com.example.gerenciadorcompras.models.User
-import com.example.gerenciadorcompras.services.ListaService
+import com.example.gerenciadorcompras.repositories.ListaRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class CriarListaViewModel(private val service: ListaService) : ViewModel() {
-
-    private val _result = MutableLiveData<AppResult>()
-    val result: LiveData<AppResult> get() = _result
+class CriarListaViewModel(private val repository: ListaRepository) : ViewModel() {
+    private val _result = MutableStateFlow<AppResult?>(null)
+    val result: StateFlow<AppResult?> get() = _result
 
     fun criarLista(user: User, titulo: String, logoUri: String) {
-        val result = service.adicionarLista(user, titulo, logoUri)
-        _result.value = result
+        viewModelScope.launch {
+            val result = repository.adicionarLista(user, titulo, logoUri)
+            _result.value = result
+        }
     }
 
     fun deletarLista(idLista: Int) {
-        val result = service.deleteLista(idLista)
-        _result.value = result
+        viewModelScope.launch {
+            val result = repository.deleteLista(idLista)
+            _result.value = result
+        }
     }
 
     fun updateLista(titulo: String, logoUri: String, idLista: Int) {
-        val result = service.updateLista(titulo, logoUri, idLista)
-        _result.value = result
+        viewModelScope.launch {
+            val result = repository.updateLista(titulo, logoUri, idLista)
+            _result.value = result
+        }
+    }
+
+    fun carregarLista(id: Int) {
+        viewModelScope.launch {
+            val result = repository.encontrarLista(id)
+            _result.value = AppResult(StatusResult.SALVO)
+        }
     }
 }

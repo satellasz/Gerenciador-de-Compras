@@ -1,20 +1,28 @@
 package com.example.gerenciadorcompras.singletons
 
-import com.example.gerenciadorcompras.repositories.MemoryItemRepository
-import com.example.gerenciadorcompras.repositories.MemoryListaRepository
-import com.example.gerenciadorcompras.repositories.MemoryUserRepository
-import com.example.gerenciadorcompras.services.ItemService
-import com.example.gerenciadorcompras.services.ListaService
-import com.example.gerenciadorcompras.services.LoginService
-import com.example.gerenciadorcompras.services.UserService
+import com.example.gerenciadorcompras.datasource.item.ItemFireBaseDataSource
+import com.example.gerenciadorcompras.datasource.item.ItemMemoryDataSource
+import com.example.gerenciadorcompras.datasource.lista.ListaFireBaseDataSource
+import com.example.gerenciadorcompras.datasource.lista.ListaMemoryDataSource
+import com.example.gerenciadorcompras.datasource.user.UserFireBaseDataSource
+import com.example.gerenciadorcompras.datasource.user.UserMemoryDataSource
+import com.example.gerenciadorcompras.repositories.ItemRepository
+import com.example.gerenciadorcompras.repositories.ListaRepository
+import com.example.gerenciadorcompras.repositories.UserRepository
 
 object AppContainer {
-    val userRepository = MemoryUserRepository()
-    val listaRepository = MemoryListaRepository()
-    val itemRepository = MemoryItemRepository()
-    val userService = UserService(userRepository)
-    val listaService = ListaService(listaRepository)
-    val loginService = LoginService(userRepository)
+    // User
+    val userMemoryDataSource = UserMemoryDataSource()
+    val userFireBaseDataSource = UserFireBaseDataSource()
+    val userRepository = UserRepository(userMemoryDataSource, userFireBaseDataSource)
 
-    val itemService = ItemService(itemRepository)
+    // Lista
+    val listaMemoryDataSource = ListaMemoryDataSource()
+    val listaFireBaseDataSource = ListaFireBaseDataSource()
+    val listaRepository = ListaRepository(listaMemoryDataSource, listaFireBaseDataSource)
+
+    // Item
+    val itemMemoryDataSource = ItemMemoryDataSource()
+    val itemFireBaseDataSource = ItemFireBaseDataSource()
+    val itemRepository = ItemRepository(itemMemoryDataSource, itemFireBaseDataSource)
 }

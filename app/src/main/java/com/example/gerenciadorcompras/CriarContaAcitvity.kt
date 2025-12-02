@@ -6,10 +6,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.gerenciadorcompras.databinding.ActivityCriarContaBinding
 import com.example.gerenciadorcompras.enums.StatusResult
-import com.example.gerenciadorcompras.singletons.AppContainer.userService
+import com.example.gerenciadorcompras.singletons.AppContainer.userRepository
 import com.example.gerenciadorcompras.viewmodels.CriarContaViewModel
+import kotlinx.coroutines.launch
 
 class CriarContaAcitvity : AppCompatActivity() {
     private lateinit var binding: ActivityCriarContaBinding
@@ -31,7 +35,7 @@ class CriarContaAcitvity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
-        viewModel = CriarContaViewModel(userService)
+        viewModel = CriarContaViewModel(userRepository)
 
         binding.buttonCriar.setOnClickListener {
             viewModel.criarConta(
@@ -42,12 +46,20 @@ class CriarContaAcitvity : AppCompatActivity() {
             )
         }
 
-        viewModel.result.observe(this) { result ->
-            if (result.status == StatusResult.SALVO) {
-                Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
-                finish()
-            } else {
-                Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.result.collect { result ->
+                    if (result == null) return@collect
+
+                    if (result.status == StatusResult.SALVO) {
+                        Toast.makeText(this@CriarContaAcitvity, result.message, Toast.LENGTH_SHORT)
+                            .show()
+                        finish()
+                    } else {
+                        Toast.makeText(this@CriarContaAcitvity, result.message, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
             }
         }
     }
