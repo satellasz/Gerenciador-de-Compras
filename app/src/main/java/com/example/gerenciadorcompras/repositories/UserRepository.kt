@@ -52,7 +52,10 @@ class UserRepository(
 
             AppResult(StatusResult.SALVO, "Conta criada com sucesso!", username)
         } catch (_: FirebaseAuthWeakPasswordException) {
-            AppResult(StatusResult.ERRO, "Senha muito fraca. Necessário ter, pelo menos, 6 caracteres")
+            AppResult(
+                StatusResult.ERRO,
+                "Senha muito fraca. Necessário ter, pelo menos, 6 caracteres"
+            )
         } catch (e: Exception) {
             AppResult(StatusResult.ERRO, e.message)
         }
@@ -118,5 +121,20 @@ class UserRepository(
     suspend fun logout() {
         remote.setUserLogado(null)
         memory.setUserLogado(null)
+    }
+
+    suspend fun recuperarConta(email: String): AppResult {
+        return try {
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                return AppResult(StatusResult.ERRO, "E-mail inválido")
+            }
+
+            remote.recuperarConta(email)
+
+            AppResult(StatusResult.SALVO, "E-mail enviado com sucesso")
+        } catch (e: Exception) {
+            AppResult(StatusResult.ERRO, e.message)
+        }
+
     }
 }

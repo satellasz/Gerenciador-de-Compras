@@ -39,4 +39,8 @@ class UserMemoryDataSource : UserDataSource {
 
         AppSingleton.userLogado = user
     }
+
+    override suspend fun recuperarConta(email: String) {
+        // Não implementado
+    }
 }

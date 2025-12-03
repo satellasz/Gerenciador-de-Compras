@@ -17,4 +17,6 @@ interface UserDataSource {
     suspend fun getUserLogado(): User?
 
     suspend fun setUserLogado(user: User?)
+
+    suspend fun recuperarConta(email: String)
 }

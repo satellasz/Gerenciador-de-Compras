@@ -1,10 +1,6 @@
 package com.example.gerenciadorcompras.datasource.user
 
-import com.example.gerenciadorcompras.enums.StatusResult
-import com.example.gerenciadorcompras.models.AppResult
 import com.example.gerenciadorcompras.models.User
-import com.example.gerenciadorcompras.models.UserResult
-import com.google.android.play.integrity.internal.t
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -14,7 +10,6 @@ class UserFireBaseDataSource(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
     firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 ) : UserDataSource {
-    private val usuarioNaoEncontrado = "Usuário não encontrado"
     private val collection = firestore.collection("users")
 
     override suspend fun adicionarUser(
@@ -29,7 +24,7 @@ class UserFireBaseDataSource(
             authResult.user ?: throw Exception("Usuário não encontrado na criação")
 
         try {
-             user = User(
+            user = User(
                 id = firebaseUser.uid.hashCode().absoluteValue,
                 username = username,
                 email = email,
@@ -90,5 +85,9 @@ class UserFireBaseDataSource(
 
         val authResult = auth.signInWithEmailAndPassword(user.email, user.password).await()
         authResult.user ?: throw Exception("Usuário não encontrado")
+    }
+
+    override suspend fun recuperarConta(email: String) {
+        auth.sendPasswordResetEmail(email).await()
     }
 }

@@ -70,6 +70,11 @@ class MainActivity : AppCompatActivity() {
             launcher.launch(intent)
         }
 
+        binding.textRecuperarConta.setOnClickListener {
+            val intent = Intent(this@MainActivity, RecuperacaoContaActivity::class.java)
+            launcher.launch(intent)
+        }
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.loginResult.collect { result ->

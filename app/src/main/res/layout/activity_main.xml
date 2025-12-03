@@ -101,5 +101,19 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonAcessar"
         tools:ignore="HardcodedText" />
 
+    <TextView
+        android:id="@+id/textRecuperarConta"
+        style="@style/App.Titulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/underlined_text"
+        android:textSize="16sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="@+id/buttonCriarConta"
+        app:layout_constraintStart_toStartOf="@+id/buttonCriarConta"
+        app:layout_constraintTop_toBottomOf="@+id/buttonCriarConta"
+        tools:ignore="HardcodedText" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
