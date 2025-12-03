@@ -69,9 +69,15 @@ class UserRepository(
 
             val user = encontrarUser(email, password)
 
-            return if (user != null) {
-                UserResult(true, user)
-            } else UserResult(false)
+            if (user == null) {
+                return UserResult(false)
+            }
+
+            user.password = password
+
+            login(user)
+
+            UserResult(true, user)
         } catch (e: Exception) {
             UserResult(false, null, e.message)
         }

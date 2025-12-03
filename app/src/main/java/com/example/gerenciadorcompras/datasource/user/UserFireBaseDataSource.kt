@@ -48,13 +48,11 @@ class UserFireBaseDataSource(
         email: String,
         password: String
     ): User? {
-        val querySnapshot = collection
-            .whereEqualTo("email", email)
-            .whereEqualTo("password", password)
-            .get()
-            .await()
+        val result = auth.signInWithEmailAndPassword(email, password).await()
+        val uid = result.user?.uid ?: return null
 
-        return querySnapshot.documents.first().toObject(User::class.java)
+        val userDoc = collection.document(uid).get().await()
+        return userDoc.toObject(User::class.java)
     }
 
     override suspend fun encontrarUserPorEmail(email: String): User? {

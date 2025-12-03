@@ -107,10 +107,9 @@ class MainActivity : AppCompatActivity() {
         moveTaskToBack(true)
     }
 
-    private suspend fun handlerLoginResult(result: UserResult) {
+    private fun handlerLoginResult(result: UserResult) {
         try {
             if (result.success) {
-                userRepository.login(result.user!!)
                 clearCampos()
                 showToast("Login feito com sucesso")
 
